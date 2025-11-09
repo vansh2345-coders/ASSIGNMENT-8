@@ -1,0 +1,151 @@
+#include <iostream>
+using namespace std;
+
+// Node structure for BST
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
+    Node(int val) {
+        data = val;
+        left = right = nullptr;
+    }
+};
+
+// Insert a node into BST
+Node* insert(Node* root, int val) {
+    if (root == nullptr)
+        return new Node(val);
+
+    if (val < root->data)
+        root->left = insert(root->left, val);
+    else if (val > root->data)
+        root->right = insert(root->right, val);
+
+    return root;
+}
+
+// (a) Search a given item - Recursive
+Node* searchRecursive(Node* root, int key) {
+    if (root == nullptr || root->data == key)
+        return root;
+    if (key < root->data)
+        return searchRecursive(root->left, key);
+    else
+        return searchRecursive(root->right, key);
+}
+
+// (a) Search a given item - Non-Recursive
+Node* searchIterative(Node* root, int key) {
+    while (root != nullptr) {
+        if (key == root->data)
+            return root;
+        else if (key < root->data)
+            root = root->left;
+        else
+            root = root->right;
+    }
+    return nullptr;
+}
+
+// (b) Find Maximum element
+Node* findMax(Node* root) {
+    if (root == nullptr) return nullptr;
+    while (root->right != nullptr)
+        root = root->right;
+    return root;
+}
+
+// (c) Find Minimum element
+Node* findMin(Node* root) {
+    if (root == nullptr) return nullptr;
+    while (root->left != nullptr)
+        root = root->left;
+    return root;
+}
+
+// (d) Inorder Successor (smallest value > given node)
+Node* inorderSuccessor(Node* root, Node* node) {
+    // Case 1: Right subtree exists
+    if (node->right != nullptr)
+        return findMin(node->right);
+
+    // Case 2: No right subtree → find first ancestor for which node is in left subtree
+    Node* succ = nullptr;
+    while (root != nullptr) {
+        if (node->data < root->data) {
+            succ = root;
+            root = root->left;
+        } else if (node->data > root->data)
+            root = root->right;
+        else
+            break;
+    }
+    return succ;
+}
+
+// (e) Inorder Predecessor (largest value < given node)
+Node* inorderPredecessor(Node* root, Node* node) {
+    // Case 1: Left subtree exists
+    if (node->left != nullptr)
+        return findMax(node->left);
+
+    // Case 2: No left subtree → find first ancestor for which node is in right subtree
+    Node* pred = nullptr;
+    while (root != nullptr) {
+        if (node->data > root->data) {
+            pred = root;
+            root = root->right;
+        } else if (node->data < root->data)
+            root = root->left;
+        else
+            break;
+    }
+    return pred;
+}
+
+// Inorder Traversal
+void inorder(Node* root) {
+    if (root == nullptr) return;
+    inorder(root->left);
+    cout << root->data << " ";
+    inorder(root->right);
+}
+
+int main() {
+    Node* root = nullptr;
+    root = insert(root, 50);
+    insert(root, 30);
+    insert(root, 70);
+    insert(root, 20);
+    insert(root, 40);
+    insert(root, 60);
+    insert(root, 80);
+
+    cout << "Inorder traversal: ";
+    inorder(root);
+    cout << "\n";
+
+    // (a) Search
+    int key = 60;
+    Node* result1 = searchRecursive(root, key);
+    Node* result2 = searchIterative(root, key);
+    cout << "Recursive Search for " << key << ": " << (result1 ? "Found" : "Not Found") << endl;
+    cout << "Iterative Search for " << key << ": " << (result2 ? "Found" : "Not Found") << endl;
+
+    // (b) Maximum
+    cout << "Maximum element: " << findMax(root)->data << endl;
+
+    // (c) Minimum
+    cout << "Minimum element: " << findMin(root)->data << endl;
+
+    // (d) Inorder Successor and (e) Predecessor
+    Node* node = searchRecursive(root, 50);
+    Node* succ = inorderSuccessor(root, node);
+    Node* pred = inorderPredecessor(root, node);
+
+    cout << "Inorder Successor of " << node->data << ": " << (succ ? to_string(succ->data) : "None") << endl;
+    cout << "Inorder Predecessor of " << node->data << ": " << (pred ? to_string(pred->data) : "None") << endl;
+
+    return 0;
+}
