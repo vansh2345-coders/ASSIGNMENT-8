@@ -1,0 +1,44 @@
+#include <iostream>
+#include <climits> // for INT_MIN and INT_MAX
+using namespace std;
+
+struct Node {
+    int data;
+    Node *left, *right;
+    Node(int val) {
+        data = val;
+        left = right = nullptr;
+    }
+};
+
+// Function to check whether a tree is BST or not
+bool isBST(Node* root, int minVal, int maxVal) {
+    if (root == nullptr)
+        return true;  // empty tree is BST
+
+    if (root->data <= minVal || root->data >= maxVal)
+        return false; // violates BST property
+
+    // check subtrees with updated ranges
+    return isBST(root->left, minVal, root->data) &&
+           isBST(root->right, root->data, maxVal);
+}
+
+int main() {
+    // Creating a sample binary tree
+    Node* root = new Node(50);
+    root->left = new Node(30);
+    root->right = new Node(70);
+    root->left->left = new Node(20);
+    root->left->right = new Node(40);
+    root->right->left = new Node(60);
+    root->right->right = new Node(80);
+
+    // Check if BST
+    if (isBST(root, INT_MIN, INT_MAX))
+        cout << "The given binary tree is a BST.\n";
+    else
+        cout << "The given binary tree is NOT a BST.\n";
+
+    return 0;
+}
