@@ -1,0 +1,98 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class PriorityQueue {
+    vector<int> heap;
+
+    // Function to maintain heap property (heapify down)
+    void heapifyDown(int i) {
+        int largest = i;
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+
+        // Compare with left child
+        if (left < heap.size() && heap[left] > heap[largest])
+            largest = left;
+
+        // Compare with right child
+        if (right < heap.size() && heap[right] > heap[largest])
+            largest = right;
+
+        // If largest is not root
+        if (largest != i) {
+            swap(heap[i], heap[largest]);
+            heapifyDown(largest);
+        }
+    }
+
+    // Function to maintain heap property (heapify up)
+    void heapifyUp(int i) {
+        int parent = (i - 1) / 2;
+
+        // If child is greater than parent
+        if (i > 0 && heap[i] > heap[parent]) {
+            swap(heap[i], heap[parent]);
+            heapifyUp(parent);
+        }
+    }
+
+public:
+    // Insert element into priority queue
+    void insert(int val) {
+        heap.push_back(val);
+        heapifyUp(heap.size() - 1);
+    }
+
+    // Return highest priority element
+    int getMax() {
+        if (heap.empty()) {
+            cout << "Priority Queue is empty!\n";
+            return -1;
+        }
+        return heap[0];
+    }
+
+    // Remove highest priority element
+    void extractMax() {
+        if (heap.empty()) {
+            cout << "Priority Queue is empty!\n";
+            return;
+        }
+        heap[0] = heap.back();
+        heap.pop_back();
+        heapifyDown(0);
+    }
+
+    // Display the elements
+    void display() {
+        cout << "Priority Queue (Heap): ";
+        for (int val : heap)
+            cout << val << " ";
+        cout << endl;
+    }
+};
+
+int main() {
+    PriorityQueue pq;
+
+    pq.insert(30);
+    pq.insert(10);
+    pq.insert(50);
+    pq.insert(20);
+    pq.insert(60);
+
+    pq.display();             // current heap
+
+    cout << "Highest priority element: " << pq.getMax() << endl;
+
+    pq.extractMax();
+    cout << "After removing highest priority: ";
+    pq.display();
+
+    pq.extractMax();
+    cout << "After removing next highest priority: ";
+    pq.display();
+
+    return 0;
+}
